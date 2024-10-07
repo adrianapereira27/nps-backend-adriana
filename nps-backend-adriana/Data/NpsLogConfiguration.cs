@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using nps_backend_adriana.Models.Entities;
 
-namespace nps_backend_adriana.Services.Configuration
+namespace nps_backend_adriana.Data
 {
     public class NpsLogConfiguration : IEntityTypeConfiguration<NpsLog>
     {

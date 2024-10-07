@@ -4,6 +4,6 @@
     {
         public int Score { get; set; }
         public string Description { get; set; }
-        public Guid? CategoryId { get; set; }
+        public int CategoryNumber { get; set; }
     }
 }

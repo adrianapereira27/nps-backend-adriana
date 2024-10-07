@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using nps_backend_adriana.Data;
 using nps_backend_adriana.Models.Interfaces;
 using nps_backend_adriana.Models.Repositories;
-using nps_backend_adriana.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
