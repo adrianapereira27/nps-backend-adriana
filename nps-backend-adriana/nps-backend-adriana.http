@@ -1,0 +1,6 @@
+@nps_backend_adriana_HostAddress = http://localhost:5252
+
+GET {{nps_backend_adriana_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
