@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using nps_backend_adriana.Models.Dto;
 using nps_backend_adriana.Services;
 
 namespace nps_backend_adriana.Controllers
@@ -20,7 +20,25 @@ namespace nps_backend_adriana.Controllers
         {
             var result = await _logService.CheckSurveyAsync();
 
-            return Ok(result); 
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostSurvey([FromBody] NpsLogDto npsDto)
+        {
+            if (npsDto == null)
+            {
+                return BadRequest("Dados inválidos.");
+            }
+
+            var result = await _logService.ProcessNpsSurvey(npsDto);
+
+            if (result)
+            {
+                return Ok("Nota salva com sucesso.");
+            }
+
+            return StatusCode(500, "Erro ao salvar a nota.");
         }
 
     }

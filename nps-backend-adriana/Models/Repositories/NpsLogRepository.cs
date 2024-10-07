@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using nps_backend_adriana.Models.Entities;
+﻿using nps_backend_adriana.Models.Entities;
 using nps_backend_adriana.Models.Interfaces;
 using nps_backend_adriana.Services;
 
