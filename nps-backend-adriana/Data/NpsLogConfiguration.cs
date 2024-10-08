@@ -8,12 +8,15 @@ namespace nps_backend_adriana.Data
     {
         public void Configure(EntityTypeBuilder<NpsLog> builder)
         {
-            builder.ToTable("NpsLog");
+            builder.ToTable("NpsLogs");
 
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.DateScore)
                 .IsRequired();
+
+            builder.Property(x => x.Description)
+                .HasColumnType("nvarchar(150)");                
 
             builder.Property(x => x.SystemId)
                 .IsRequired();
@@ -22,6 +25,7 @@ namespace nps_backend_adriana.Data
                 .IsRequired();
 
             builder.Property(x => x.UserId)
+                .HasColumnType("nvarchar(50)")
                 .IsRequired();
         }
     }

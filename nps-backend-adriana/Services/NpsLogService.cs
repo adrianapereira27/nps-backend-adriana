@@ -1,5 +1,6 @@
 ﻿using nps_backend_adriana.Models.Entities;
 using nps_backend_adriana.Models.Interfaces;
+using System.Net;
 
 namespace nps_backend_adriana.Services
 {
@@ -8,7 +9,7 @@ namespace nps_backend_adriana.Services
         private readonly INpsLogRepository _npsLogRepository;
         private readonly HttpClient _httpClient;
         private const string systemId = "3c477fc7-0d4d-458a-6078-08dc43a0a620";
-        private const string user = "adriana5";
+        private const string user = "adriana6";
 
         public NpsLogService(INpsLogRepository npsLogRepository, HttpClient httpClient)
         {
@@ -25,13 +26,21 @@ namespace nps_backend_adriana.Services
             try
             {
                 var response = await _httpClient.SendAsync(request);   // Envia a requisição para a API externa
-                response.EnsureSuccessStatusCode();   // Verifica se o status da resposta é sucesso (2xx)
 
-                return await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    return "Usuário não tem pesquisa para responder!";
+                }
+                else
+                {
+                    response.EnsureSuccessStatusCode();   // Verifica se o status da resposta é sucesso (2xx)
+
+                    return await response.Content.ReadAsStringAsync();
+                }
             }
             catch (HttpRequestException ex)
             {
-                return "Usuário não tem pesquisa NPS para responder!";
+                return "Erro ao gerar pesquisa NPS!";
             }
         }
 
@@ -74,6 +83,7 @@ namespace nps_backend_adriana.Services
                 Score = score,
                 UserId = user
             };
+
             await _npsLogRepository.AddAsync(npsLog);
 
             return true;
