@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using nps_backend_adriana.Models.Entities;
 
-namespace nps_backend_adriana.Data
+namespace nps_backend_adriana.Services
 {
     public class NpsLogConfiguration : IEntityTypeConfiguration<NpsLog>
     {
@@ -16,7 +16,7 @@ namespace nps_backend_adriana.Data
                 .IsRequired();
 
             builder.Property(x => x.Description)
-                .HasColumnType("nvarchar(150)");                
+                .HasColumnType("nvarchar(150)");
 
             builder.Property(x => x.SystemId)
                 .IsRequired();

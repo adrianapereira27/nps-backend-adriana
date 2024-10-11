@@ -33,10 +33,14 @@ namespace nps_backend_adriana.Controllers
             }
                         
             try
-            {
-                // Faz o mapeamento do int para o UUID correspondente
-                var categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
-
+            {                
+                var categoryId = Guid.Empty;
+                if (npsDto.Score < 7)
+                {
+                    // Faz o mapeamento do int para o UUID correspondente
+                    categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
+                }
+                
                 // Chama o serviço para processar e enviar o JSON para a API externa
                 var result = await _logService.ProcessNpsSurvey(
                     npsDto.Score,

@@ -2,7 +2,7 @@
 using nps_backend_adriana.Models.Entities;
 using System.Reflection;
 
-namespace nps_backend_adriana.Data
+namespace nps_backend_adriana.Services
 {
     public class NpsDbContext : DbContext
     {
