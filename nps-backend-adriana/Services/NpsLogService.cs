@@ -1,10 +1,11 @@
 ﻿using nps_backend_adriana.Models.Entities;
 using nps_backend_adriana.Models.Interfaces;
+using nps_backend_adriana.Services.Interfaces;
 using System.Net;
 
 namespace nps_backend_adriana.Services
 {
-    public class NpsLogService
+    public class NpsLogService : INpsLogService
     {
         private readonly INpsLogRepository _npsLogRepository;
         private readonly HttpClient _httpClient;

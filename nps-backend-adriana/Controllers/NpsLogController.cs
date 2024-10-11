@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using nps_backend_adriana.Models.Dto;
-using nps_backend_adriana.Services;
+using nps_backend_adriana.Services.Interfaces;
 using nps_backend_adriana.Services.Mapping;
 
 namespace nps_backend_adriana.Controllers
@@ -9,9 +9,9 @@ namespace nps_backend_adriana.Controllers
     [ApiController]
     public class NpsLogController : ControllerBase
     {
-        private readonly NpsLogService _logService;
+        private readonly INpsLogService _logService;
 
-        public NpsLogController(NpsLogService logService)
+        public NpsLogController(INpsLogService logService)
         {
             _logService = logService;
         }
@@ -31,20 +31,20 @@ namespace nps_backend_adriana.Controllers
             {
                 return BadRequest("Dados inválidos.");
             }
-                        
+
             try
-            {                
+            {
                 var categoryId = Guid.Empty;
                 if (npsDto.Score < 7)
                 {
                     // Faz o mapeamento do int para o UUID correspondente
                     categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
                 }
-                
+
                 // Chama o serviço para processar e enviar o JSON para a API externa
                 var result = await _logService.ProcessNpsSurvey(
                     npsDto.Score,
-                    npsDto.Description,                                   
+                    npsDto.Description,
                     categoryId); // Passa o UUID correspondente
 
                 if (result)

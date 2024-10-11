@@ -3,18 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using nps_backend_adriana.Controllers;
 using nps_backend_adriana.Models.Dto;
-using nps_backend_adriana.Services;
+using nps_backend_adriana.Services.Interfaces;
 
 namespace nps_backend_adriana.UnitTests.Controllers
 {
     public class NpsLogControllerTests
     {
-        private readonly Mock<NpsLogService> _mockService;  // Mock do service
+        private readonly Mock<INpsLogService> _mockService;  // Mock do service
         private readonly NpsLogController _controller;
 
         public NpsLogControllerTests()
         {
-            _mockService = new Mock<NpsLogService>(null, null);
+            _mockService = new Mock<INpsLogService>();
             _controller = new NpsLogController(_mockService.Object);  // Injeta o mock
         }
 
@@ -97,7 +97,7 @@ namespace nps_backend_adriana.UnitTests.Controllers
             var badRequestResult = result as BadRequestObjectResult;
             badRequestResult.Should().NotBeNull();
             badRequestResult.StatusCode.Should().Be(400);  // Verifica se o status é 400 (Bad Request)
-            badRequestResult.Value.Should().Be("Categoria inválida.");  // Verifica se a mensagem de erro é a esperada
+            badRequestResult.Value.Should().Be("Categoria inválida");  // Verifica se a mensagem de erro é a esperada
         }
 
         // Testa o método PostSurvey quando o DTO é nulo
@@ -133,6 +133,6 @@ namespace nps_backend_adriana.UnitTests.Controllers
             statusCodeResult.Value.Should().Be("Erro ao salvar a nota.");
         }
 
-                
+
     }
 }
