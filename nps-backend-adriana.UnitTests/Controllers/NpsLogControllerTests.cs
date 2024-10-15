@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using nps_backend_adriana.Controllers;
@@ -74,46 +75,7 @@ namespace nps_backend_adriana.UnitTests.Controllers
             okResult.StatusCode.Should().Be(200);
             okResult.Value.Should().Be("Nota e log salvos com sucesso.");
         }
-
-        [Fact]
-        public async Task PostSurvey_ReturnsBadRequest_WhenScoreIsLessThanSevenAndCategoryIsZero()
-        {
-            // Arrange
-            var npsDto = new NpsLogDto
-            {
-                Score = 5,  // Nota inferior a 7
-                Description = "Não gostei do serviço",
-                CategoryNumber = 0 // Categoria zerada
-            };
-
-            // Não é necessário simular o serviço porque o erro ocorrerá antes da chamada ao service
-            _mockService.Setup(service => service.ProcessNpsSurvey(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Guid>()))
-                           .ReturnsAsync(true); // Apenas para garantir que o serviço não será chamado
-
-            // Act
-            var result = await _controller.PostSurvey(npsDto);
-
-            // Assert
-            var badRequestResult = result as BadRequestObjectResult;
-            badRequestResult.Should().NotBeNull();
-            badRequestResult.StatusCode.Should().Be(400);  // Verifica se o status é 400 (Bad Request)
-            badRequestResult.Value.Should().Be("Categoria inválida");  // Verifica se a mensagem de erro é a esperada
-        }
-
-        // Testa o método PostSurvey quando o DTO é nulo
-        [Fact]
-        public async Task PostSurvey_ReturnsBadRequest_WhenDtoIsNull()
-        {
-            // Act
-            var result = await _controller.PostSurvey(null);
-
-            // Assert
-            var badRequestResult = result as BadRequestObjectResult;
-            badRequestResult.Should().NotBeNull();
-            badRequestResult.StatusCode.Should().Be(400);
-            badRequestResult.Value.Should().Be("Dados inválidos.");
-        }
-
+               
         // Testa o método PostSurvey quando a service falha
         [Fact]
         public async Task PostSurvey_ReturnsStatus500_WhenServiceFails()

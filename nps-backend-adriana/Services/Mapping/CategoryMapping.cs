@@ -21,7 +21,7 @@
                 return categoryId;
             }
 
-            throw new ArgumentException("Categoria inválida");
+            return Guid.Empty;            
         }
 
         // Pega o nome da categoria baseado no inteiro

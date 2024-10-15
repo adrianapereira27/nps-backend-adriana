@@ -26,22 +26,13 @@ namespace nps_backend_adriana.Controllers
 
         [HttpPost]
         public async Task<IActionResult> PostSurvey([FromBody] NpsLogDto npsDto)
-        {
-            if (npsDto == null)
-            {
-                return BadRequest("Dados inválidos.");
-            }
-
+        {    
             try
-            {
-                var categoryId = Guid.Empty;
-                if (npsDto.Score < 7)
-                {
-                    // Faz o mapeamento do int para o UUID correspondente
-                    categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
-                }
-
-                // Chama o serviço para processar e enviar o JSON para a API externa
+            {                
+                // Faz o mapeamento do int para o UUID correspondente
+                var categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
+                
+                // Chama o serviço para salvar o Log e enviar o JSON para a API externa
                 var result = await _logService.ProcessNpsSurvey(
                     npsDto.Score,
                     npsDto.Description,
