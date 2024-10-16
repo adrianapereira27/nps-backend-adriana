@@ -26,29 +26,22 @@ namespace nps_backend_adriana.Controllers
 
         [HttpPost]
         public async Task<IActionResult> PostSurvey([FromBody] NpsLogDto npsDto)
-        {    
-            try
-            {                
-                // Faz o mapeamento do int para o UUID correspondente
-                var categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
+        {                            
+            // Faz o mapeamento do int para o UUID correspondente
+            var categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
                 
-                // Chama o serviço para salvar o Log e enviar o JSON para a API externa
-                var result = await _logService.ProcessNpsSurvey(
-                    npsDto.Score,
-                    npsDto.Description,
-                    categoryId); // Passa o UUID correspondente
+            // Chama o serviço para salvar o Log e enviar o JSON para a API externa
+            var result = await _logService.ProcessNpsSurvey(
+                npsDto.Score,
+                npsDto.Description,
+                categoryId); // Passa o UUID correspondente
 
-                if (result)
-                {
-                    return Ok("Nota e log salvos com sucesso.");
-                }
-
-                return StatusCode(500, "Erro ao salvar a nota.");
-            }
-            catch (ArgumentException ex)
+            if (result)
             {
-                return BadRequest(ex.Message);
+                return Ok("Nota e log salvos com sucesso.");
             }
+
+            return StatusCode(500, "Erro ao salvar a nota.");           
 
         }
 

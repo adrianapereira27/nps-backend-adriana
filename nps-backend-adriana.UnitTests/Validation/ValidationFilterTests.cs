@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Moq;
 
-namespace nps_backend_adriana.UnitTests.ValidationFilter
+namespace nps_backend_adriana.UnitTests.Validation
 {
     public class ValidationFilterTests
     {

@@ -72,6 +72,27 @@ namespace nps_backend_adriana.UnitTests.Services
             result.Should().Be("Usuário não tem pesquisa para responder!");
         }
 
+        // Testa retorno de erro para cair no catch do método CheckSurveyAsync
+        [Fact]
+        public async Task CheckSurveyAsync_WhenHttpRequestExceptionIsThrown_ShouldReturnErrorMessage()
+        {
+            // Arrange
+            var url = $"https://nps-stg.ambevdevs.com.br/api/question/check?user=adriana8&systemId=3c477fc7-0d4d-458a-6078-08dc43a0a620";
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ThrowsAsync(new HttpRequestException()); // Simula uma exceção HttpRequestException
+
+            // Act
+            var result = await _npsLogService.CheckSurveyAsync();
+
+            // Assert
+            Assert.Equal("Erro ao gerar pesquisa NPS!", result);
+        }
+
         // Teste quando o envio da nota para a API externa é bem-sucedido
         [Fact]
         public async Task ProcessNpsSurvey_ReturnsTrue_WhenSurveyProcessedSuccessfully()
