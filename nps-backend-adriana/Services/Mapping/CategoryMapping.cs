@@ -22,22 +22,7 @@
             }
 
             return Guid.Empty;            
-        }
-
-        // Pega o nome da categoria baseado no inteiro
-        public static string GetCategoryName(int categoryNumber)
-        {
-            return categoryNumber switch
-            {
-                1 => "OTHER",
-                2 => "CRASH",
-                3 => "SLOWNESS",
-                4 => "INTERFACE",
-                5 => "BUGS",
-                6 => "CONNECTIVITY",
-                _ => throw new ArgumentException("Categoria inválida")
-            };
-        }
+        }  
 
     }
 }

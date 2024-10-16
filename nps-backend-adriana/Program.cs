@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using nps_backend_adriana.Models.Dto.Settings;
 using nps_backend_adriana.Models.Interfaces;
 using nps_backend_adriana.Models.Repositories;
 using nps_backend_adriana.Services;
@@ -8,6 +9,9 @@ using nps_backend_adriana.Services.Interfaces;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Adicionar configuração da URL a partir do appsettings.json
+builder.Services.Configure<NpsApiSettings>(builder.Configuration.GetSection("NpsApi"));
 
 // Add services to the container.
 

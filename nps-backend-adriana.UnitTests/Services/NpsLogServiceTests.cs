@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
+using nps_backend_adriana.Models.Dto.Settings;
 using nps_backend_adriana.Models.Entities;
 using nps_backend_adriana.Models.Interfaces;
 using nps_backend_adriana.Services;
@@ -23,7 +25,11 @@ namespace nps_backend_adriana.UnitTests.Services
             _mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             _mockHttpClient = new HttpClient(_mockHttpMessageHandler.Object);
 
-            _npsLogService = new NpsLogService(_mockRepository.Object, _mockHttpClient);
+            // Mockando as opções de configuração
+            var mockOptions = Options.Create(new NpsApiSettings { CheckSurveyUrl = "https://mock-nps-url.com/api/question/check" });
+
+            // Injetando as dependências
+            _npsLogService = new NpsLogService(_mockRepository.Object, _mockHttpClient, mockOptions);
         }
 
         // Teste quando a API retorna uma resposta válida (200 OK)
@@ -77,7 +83,8 @@ namespace nps_backend_adriana.UnitTests.Services
         public async Task CheckSurveyAsync_WhenHttpRequestExceptionIsThrown_ShouldReturnErrorMessage()
         {
             // Arrange
-            var url = $"https://nps-stg.ambevdevs.com.br/api/question/check?user=adriana8&systemId=3c477fc7-0d4d-458a-6078-08dc43a0a620";
+            var url = "https://mock-nps-url.com/api/question/check?user=adriana8&systemId=3c477fc7-0d4d-458a-6078-08dc43a0a620";
+            
             _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
