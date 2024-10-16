@@ -13,7 +13,7 @@ namespace nps_backend_adriana.Services
         private readonly HttpClient _httpClient;
         private readonly string _checkSurveyUrl;
         private const string systemId = "3c477fc7-0d4d-458a-6078-08dc43a0a620";
-        private const string user = "adriana8";
+        private const string user = "adriana10";
 
         public NpsLogService(INpsLogRepository npsLogRepository, HttpClient httpClient, IOptions<NpsApiSettings> npsApiSettings)
         {
