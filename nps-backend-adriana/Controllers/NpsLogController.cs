@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using nps_backend_adriana.Exceptions;
 using nps_backend_adriana.Models.Dto;
 using nps_backend_adriana.Services.Interfaces;
 using nps_backend_adriana.Services.Mapping;
@@ -25,10 +26,12 @@ namespace nps_backend_adriana.Controllers
         /// <param name="login">Login do usuário</param>
         /// <returns>Pergunta</returns>
         /// <response code="200">Sucesso</response>
-        /// <response code="400">Bad Request</response>
+        /// <response code="400">BadRequest</response>
+        /// <response code="404">NotFound</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)] // codigo de retorno
         [ProducesResponseType(StatusCodes.Status400BadRequest)] // codigo de retorno
+        [ProducesResponseType(StatusCodes.Status404NotFound)] // codigo de retorno
         public async Task<IActionResult> CheckSurvey([FromQuery] PerguntaDto login)
         {
             if (!ModelState.IsValid)
@@ -40,11 +43,14 @@ namespace nps_backend_adriana.Controllers
                 var result = await _logService.CheckSurveyAsync(login.UserId);
 
                 return Ok(result);
-
             }
-            catch (Exception ex)
+            catch (NpsException ex) when (ex.ErrorCode == 404)
             {
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
+            }
+            catch (NpsException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
             }
 
         }
@@ -70,21 +76,34 @@ namespace nps_backend_adriana.Controllers
             {                
                 return BadRequest(ModelState);
             }
-            var categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
-            
-            // Chama o serviço para salvar o Log e enviar o JSON para a API externa
-            var result = await _logService.ProcessNpsSurvey(
-                npsDto.Score,
-                npsDto.Description,
-                npsDto.UserId,
-                categoryId); // Passa o UUID correspondente
-
-            if (result)
+            try
             {
-                return Ok("Nota e log salvos com sucesso.");
-            }
+                var categoryId = CategoryMapping.GetCategoryId(npsDto.CategoryNumber);
 
-            return StatusCode(500, "Erro ao salvar a nota.");
+                // Chama o serviço para salvar o Log e enviar o JSON para a API externa
+                var result = await _logService.ProcessNpsSurvey(
+                    npsDto.Score,
+                    npsDto.Description,
+                    npsDto.UserId,
+                    categoryId); // Passa o UUID correspondente
+
+                if (result)
+                {
+                    return Ok("Nota e log salvos com sucesso.");
+                }
+
+                throw new NpsException("Erro ao salvar a nota.", 500);
+            }
+            catch (NpsException ex)
+            {
+                // Se a exceção NpsException for capturada, podemos retornar um StatusCode adequado
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Caso ocorra qualquer outra exceção, retornamos um StatusCode genérico para erro
+                return StatusCode(500, $"Erro inesperado: {ex.Message}");
+            }
 
         }
 

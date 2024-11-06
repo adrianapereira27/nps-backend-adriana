@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using nps_backend_adriana.Exceptions;
 using nps_backend_adriana.Models.Dto.Settings;
 using nps_backend_adriana.Models.Entities;
 using nps_backend_adriana.Models.Interfaces;
@@ -36,7 +37,7 @@ namespace nps_backend_adriana.Services
 
                 if (response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    throw new Exception("Usuário não tem pesquisa para responder!");
+                    throw new NpsException("Usuário não tem pesquisa para responder!", 404);
                 }
                 else
                 {
@@ -47,7 +48,7 @@ namespace nps_backend_adriana.Services
             }
             catch (HttpRequestException ex)
             {
-                throw new Exception("Erro ao gerar pesquisa NPS!");
+                throw new NpsException("Erro ao gerar pesquisa NPS!", 500, ex);
             }
         }
 

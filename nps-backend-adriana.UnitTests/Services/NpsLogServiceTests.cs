@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
+using nps_backend_adriana.Exceptions;
 using nps_backend_adriana.Models.Dto.Settings;
 using nps_backend_adriana.Models.Entities;
 using nps_backend_adriana.Models.Interfaces;
@@ -77,7 +78,7 @@ namespace nps_backend_adriana.UnitTests.Services
                 .ReturnsAsync(httpResponse);
 
             // Act e assert
-            var exception = await Assert.ThrowsAsync<Exception>(() => _npsLogService.CheckSurveyAsync(It.IsAny<string>()));
+            var exception = await Assert.ThrowsAsync<NpsException>(() => _npsLogService.CheckSurveyAsync(It.IsAny<string>()));
             exception.Message.Should().Be("Usuário não tem pesquisa para responder!");  // Verifica se a mensagem da exceção está correta
 
         }
@@ -96,7 +97,7 @@ namespace nps_backend_adriana.UnitTests.Services
                 .ThrowsAsync(new HttpRequestException()); // Simula uma exceção HttpRequestException
 
             // Act e assert
-            var exception = await Assert.ThrowsAsync<Exception>(() => _npsLogService.CheckSurveyAsync(It.IsAny<string>()));
+            var exception = await Assert.ThrowsAsync<NpsException>(() => _npsLogService.CheckSurveyAsync(It.IsAny<string>()));
             exception.Message.Should().Be("Erro ao gerar pesquisa NPS!");  // Verifica se a mensagem da exceção está correta
         }
 

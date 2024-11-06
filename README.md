@@ -8,9 +8,6 @@ Este projeto é uma API para o gerenciamento de pesquisas de Net Promoter Score 
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Configuração do Projeto](#configuração-do-projeto)
 - [Estrutura do Projeto](#estrutura-do-projeto)
-- [Endpoints da API](#endpoints-da-api)
-- [Testes](#testes)
-- [Contribuição](#contribuição)
 
 ## Sobre o Projeto
 
