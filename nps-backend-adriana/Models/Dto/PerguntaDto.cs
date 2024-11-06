@@ -1,4 +1,6 @@
-﻿namespace nps_backend_adriana.Models.Dto
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace nps_backend_adriana.Models.Dto
 {
     public class PerguntaDto
     {

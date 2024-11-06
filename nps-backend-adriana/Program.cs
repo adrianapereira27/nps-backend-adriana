@@ -53,7 +53,7 @@ builder.Services.AddSwaggerGen(c =>
         Contact = new OpenApiContact
         {
             Name = "Adriana",
-            Email = "adriana.p@ambevtech.com.br",
+            Email = "adriana@mail.com.br",
             Url = new Uri("https://adriana.com.br")
         }
     });
