@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using nps_backend_adriana.Controllers;
+using nps_backend_adriana.Exceptions;
 using nps_backend_adriana.Models.Dto;
 using nps_backend_adriana.Services.Interfaces;
 
@@ -18,7 +19,7 @@ namespace nps_backend_adriana.UnitTests.Controllers
             _controller = new NpsLogController(_mockService.Object);  // Injeta o mock
         }
 
-        // Testa o método CheckSurvey da controller
+        // Testa o método CheckSurvey da controller com sucesso
         [Fact]
         public async Task CheckSurvey_ReturnsOk_WhenSurveyExists()
         {
@@ -36,6 +37,41 @@ namespace nps_backend_adriana.UnitTests.Controllers
             okResult.Should().NotBeNull();
             okResult.StatusCode.Should().Be(200);
             okResult.Value.Should().Be(expectedResult);
+        }
+
+        // Testa o método CheckSurvey da controller com falha retornando 404
+        [Fact]
+        public async Task CheckSurvey_ReturnsNotFound_WhenNpsException404()
+        {
+            // Arrange
+            var login = new PerguntaDto { UserId = "1234" };
+            _mockService.Setup(x => x.CheckSurveyAsync(login.UserId))
+                .ThrowsAsync(new NpsException("Survey not found", 404));
+
+            // Act
+            var result = await _controller.CheckSurvey(login);
+
+            // Assert
+            var objectResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Survey not found", objectResult.Value);
+        }
+
+        // Testa o método CheckSurvey da controller com falha retornando 500
+        [Fact]
+        public async Task CheckSurvey_ReturnsStatusCode_WhenNpsException()
+        {
+            // Arrange
+            var login = new PerguntaDto { UserId = "1234" };
+            _mockService.Setup(x => x.CheckSurveyAsync(login.UserId))
+                .ThrowsAsync(new NpsException("Internal Server Error", 500));
+
+            // Act
+            var result = await _controller.CheckSurvey(login);
+
+            // Assert
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, objectResult.StatusCode);
+            Assert.Equal("Internal Server Error", objectResult.Value);
         }
 
         // Testa o método PostSurvey da controller com sucesso quando nota >= 7

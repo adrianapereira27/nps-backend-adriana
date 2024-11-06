@@ -7,77 +7,87 @@ using nps_backend_adriana.Models.Interfaces;
 using nps_backend_adriana.Models.Repositories;
 using nps_backend_adriana.Services;
 using nps_backend_adriana.Services.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Adicionar configuração da URL a partir do appsettings.json
-builder.Services.Configure<NpsApiSettings>(builder.Configuration.GetSection("NpsApi"));
-
-// Add services to the container.
-
-var connectionString = builder.Configuration.GetConnectionString("MinhaConexao"); // MinhaConexao está declarado no appsettings.json
-builder.Services.AddDbContext<NpsDbContext>(options => options.UseSqlServer(connectionString));
-
-builder.Services.AddScoped<INpsLogRepository, NpsLogRepository>();   // padrão repository
-
-builder.Services.AddScoped<INpsLogService, NpsLogService>();
-
-builder.Services.AddCors(options =>
+[ExcludeFromCodeCoverage]
+public class Program
 {
-    options.AddPolicy("AllowAllOrigins", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
-builder.Services.AddHttpClient();
+    public static void Main(string[] args)
+    {     
+        var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+        // Adicionar configuração da URL a partir do appsettings.json
+        builder.Services.Configure<NpsApiSettings>(builder.Configuration.GetSection("NpsApi"));
 
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient);  // ValidationFilter
-builder.Services.AddFluentValidationAutoValidation();     // FluentValidation
+        // Add services to the container.
 
+        var connectionString = builder.Configuration.GetConnectionString("MinhaConexao"); // MinhaConexao está declarado no appsettings.json
+        builder.Services.AddDbContext<NpsDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddScoped<NpsLogService>();   // Registrar o NpsLogService
+        builder.Services.AddScoped<INpsLogRepository, NpsLogRepository>();   // padrão repository
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo   // configuração do swagger para gerar a documentação
-    {
-        Title = "nps-backend-adriana",
-        Version = "v1",
-        Contact = new OpenApiContact
+        builder.Services.AddScoped<INpsLogService, NpsLogService>();
+
+        builder.Services.AddCors(options =>
         {
-            Name = "Adriana",
-            Email = "adriana@mail.com.br",
-            Url = new Uri("https://adriana.com.br")
+            options.AddPolicy("AllowAllOrigins", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
+        });
+        builder.Services.AddHttpClient();
+
+        builder.Services.AddControllers();
+
+        builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient);  // ValidationFilter
+        builder.Services.AddFluentValidationAutoValidation();     // FluentValidation
+
+
+        builder.Services.AddScoped<NpsLogService>();   // Registrar o NpsLogService
+
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo   // configuração do swagger para gerar a documentação
+            {
+                Title = "nps-backend-adriana",
+                Version = "v1",
+                Contact = new OpenApiContact
+                {
+                    Name = "Adriana",
+                    Email = "adriana.p@ambevtech.com.br",
+                    Url = new Uri("https://adriana.com.br")
+                }
+            });
+            var xmlFile = "nps-backend-adriana.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            c.IncludeXmlComments(xmlPath);
+        });
+
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
-    });
-    var xmlFile = "nps-backend-adriana.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
-});
 
-var app = builder.Build();
+        app.UseHttpsRedirection();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+        app.UseAuthorization();
+
+        //app.UseRouting();
+        app.UseCors("AllowAllOrigins"); // Habilita o CORS para permitir requisições do React
+
+        app.MapControllers();
+
+        app.Run();
+
+    }
+
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-//app.UseRouting();
-app.UseCors("AllowAllOrigins"); // Habilita o CORS para permitir requisições do React
-
-app.MapControllers();
-
-app.Run();
