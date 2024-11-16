@@ -28,25 +28,36 @@ public class Program
         builder.Services.AddScoped<INpsLogRepository, NpsLogRepository>();   // padrão repository
 
         builder.Services.AddScoped<INpsLogService, NpsLogService>();
+       // builder.Services.AddScoped<INpsLogExporter, NpsLogExporter>();
+        builder.Services.AddScoped<IPathProvider, PathProvider>();
+
+        // Registrar o NpsLogExporter
+        builder.Services.AddScoped<INpsLogExporter, NpsLogExporter>(provider =>
+        {
+            var configuration = provider.GetRequiredService<IConfiguration>();
+            var logger = provider.GetRequiredService<ILogger<NpsLogExporter>>();
+            //var connectionString = builder.Configuration.GetConnectionString("MinhaConexao");
+            return new NpsLogExporter(connectionString, logger);
+        });
 
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAllOrigins", builder =>
             {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
+                builder
+                    .WithOrigins("http://localhost:5173") // Porta do Vite
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("Content-Disposition");
             });
-        });
+        });        
+
         builder.Services.AddHttpClient();
 
         builder.Services.AddControllers();
 
         builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient);  // ValidationFilter
         builder.Services.AddFluentValidationAutoValidation();     // FluentValidation
-
-
-        builder.Services.AddScoped<NpsLogService>();   // Registrar o NpsLogService
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

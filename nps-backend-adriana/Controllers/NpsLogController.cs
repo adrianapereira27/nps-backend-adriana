@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using nps_backend_adriana.Exceptions;
 using nps_backend_adriana.Models.Dto;
+using nps_backend_adriana.Services;
 using nps_backend_adriana.Services.Interfaces;
 using nps_backend_adriana.Services.Mapping;
 
@@ -14,10 +15,16 @@ namespace nps_backend_adriana.Controllers
     public class NpsLogController : ControllerBase
     {
         private readonly INpsLogService _logService;
+        private readonly INpsLogExporter _npsExporter;
+        private readonly ILogger<NpsLogController> _logger;
+        private readonly IPathProvider _pathProvider;
 
-        public NpsLogController(INpsLogService logService)
+        public NpsLogController(INpsLogService logService, INpsLogExporter npsExporter, ILogger<NpsLogController> logger, IPathProvider pathProvider)
         {
             _logService = logService;
+            _npsExporter = npsExporter;
+            _logger = logger;
+            _pathProvider = pathProvider;
         }
 
         /// <summary>
@@ -105,6 +112,55 @@ namespace nps_backend_adriana.Controllers
                 return StatusCode(500, $"Erro inesperado: {ex.Message}");
             }
 
+        }
+
+        /// <summary>
+        /// Exporta os registros de NPS para um arquivo CSV.
+        /// O arquivo é gerado temporariamente e, em seguida, retornado ao usuário para download.        
+        /// </summary>
+        /// <returns>Um arquivo CSV com os dados de NPS ou um erro caso ocorra uma falha durante o processo.</returns>
+        /// <response code="200">Arquivo CSV gerado com sucesso.</response>
+        /// <response code="500">Erro inesperado durante a geração do arquivo CSV.</response>        
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportCsv()
+        {
+            try
+            {
+                // Criar nome do arquivo com timestamp
+                var fileName = $"nps_export_{DateTime.Now:yyyyMMddHHmmss}.csv";
+                var tempPath = Path.Combine(_pathProvider.GetTempPath(), fileName);
+
+                // Gerar o CSV
+                await _npsExporter.ExportToCsvAsync(tempPath);
+
+                // Ler o arquivo e retornar como download
+                byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(tempPath);
+
+                // Limpar o arquivo temporário
+                System.IO.File.Delete(tempPath);
+
+                // Configurar os headers manualmente
+                Response.Headers.Add("Content-Disposition", $"attachment; filename={fileName}");
+                Response.Headers.Add("Access-Control-Expose-Headers", "Content-Disposition");
+
+                return File(
+                    fileContents: fileBytes,
+                    contentType: "application/octet-stream",
+                    fileDownloadName: fileName
+                );
+            }
+            catch (NpsException ex)
+            {
+                // Retorna o código de erro personalizado e a mensagem da NpsException
+                _logger.LogError(ex, "Erro específico ao exportar CSV");
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Retorna 500 para qualquer erro inesperado
+                _logger.LogError(ex, "Erro inesperado ao exportar CSV");
+                return StatusCode(500, new { error = $"Erro inesperado: {ex.Message}" });
+            }
         }
 
     }

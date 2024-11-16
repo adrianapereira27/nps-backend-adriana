@@ -32,27 +32,7 @@ namespace nps_backend_adriana.UnitTests.Entities
             Assert.True(npsLog.UserId.Length > 0);
             Assert.True(npsLog.DateScore <= DateTime.UtcNow);
         }
-
-        [Fact]
-        public void NpsLog_DevePermitirCategoriaNula()
-        {
-            // Arrange
-            var npsLog = new NpsLog
-            {
-                Id = 2,
-                DateScore = DateTime.UtcNow,
-                SystemId = Guid.NewGuid(),
-                Score = 5,
-                Description = "Satisfatório",
-                CategoryId = null,  // Categoria nula
-                UserId = "user123"
-            };
-
-            // Act & Assert
-            Assert.Null(npsLog.CategoryId);
-            Assert.Equal(5, npsLog.Score);
-        }
-
+          
         [Fact]
         public void NpsLog_ScoreDeveSerValido()
         {

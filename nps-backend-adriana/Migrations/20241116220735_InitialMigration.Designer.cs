@@ -7,13 +7,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using nps_backend_adriana.Services;
 
-
 #nullable disable
 
 namespace nps_backend_adriana.Migrations
 {
     [DbContext(typeof(NpsDbContext))]
-    [Migration("20241008120646_InitialMigration")]
+    [Migration("20241116220735_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -34,7 +33,7 @@ namespace nps_backend_adriana.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateScore")

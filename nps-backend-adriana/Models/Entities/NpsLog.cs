@@ -7,7 +7,7 @@
         public Guid SystemId { get; set; }
         public int Score { get; set; }
         public string Description { get; set; }
-        public Guid? CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         public string UserId { get; set; }
     }
 }

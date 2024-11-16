@@ -21,7 +21,7 @@ namespace nps_backend_adriana.Migrations
                     SystemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Score = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(150)", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(50)", nullable: false)
                 },
                 constraints: table =>
