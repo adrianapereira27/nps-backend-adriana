@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using nps_backend_adriana.Exceptions;
 using nps_backend_adriana.Models.Dto;
-using nps_backend_adriana.Services;
 using nps_backend_adriana.Services.Interfaces;
 using nps_backend_adriana.Services.Mapping;
 
@@ -42,7 +41,7 @@ namespace nps_backend_adriana.Controllers
         public async Task<IActionResult> CheckSurvey([FromQuery] PerguntaDto login)
         {
             if (!ModelState.IsValid)
-            {                
+            {
                 return BadRequest(ModelState);
             }
             try
@@ -80,7 +79,7 @@ namespace nps_backend_adriana.Controllers
         public async Task<IActionResult> PostSurvey([FromBody] NpsLogDto npsDto)
         {
             if (!ModelState.IsValid)
-            {                
+            {
                 return BadRequest(ModelState);
             }
             try

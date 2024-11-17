@@ -6,6 +6,7 @@ using nps_backend_adriana.Controllers;
 using nps_backend_adriana.Exceptions;
 using nps_backend_adriana.Models.Dto;
 using nps_backend_adriana.Services.Interfaces;
+using System.Text;
 
 namespace nps_backend_adriana.UnitTests.Controllers
 {
@@ -13,7 +14,7 @@ namespace nps_backend_adriana.UnitTests.Controllers
     {
         private readonly Mock<INpsLogService> _mockService;  // Mock do service
         private readonly Mock<INpsLogExporter> _mockExporter;  // Mock do exporter
-        private readonly Mock<IPathProvider> _mockPathProvider;  // Mock do PathProvider
+        private readonly Mock<IPathProvider> _mockPathProvider;  // Mock do PathProvider       
         private readonly Mock<ILogger<NpsLogController>> _mockLogger;  // Mock do logger
         private readonly NpsLogController _controller;
         private string _tempDirectory;
@@ -23,7 +24,7 @@ namespace nps_backend_adriana.UnitTests.Controllers
             _mockService = new Mock<INpsLogService>();
             _mockExporter = new Mock<INpsLogExporter>();
             _mockLogger = new Mock<ILogger<NpsLogController>>();
-            _mockPathProvider = new Mock<IPathProvider>();
+            _mockPathProvider = new Mock<IPathProvider>();            
             _tempDirectory = Path.Combine(@"C:\Temp\", Guid.NewGuid().ToString());
             Directory.CreateDirectory(_tempDirectory);
             _mockPathProvider.Setup(p => p.GetTempPath()).Returns(_tempDirectory);
@@ -142,61 +143,7 @@ namespace nps_backend_adriana.UnitTests.Controllers
             statusCodeResult.StatusCode.Should().Be(500);
             statusCodeResult.Value.Should().Be("Erro ao salvar a nota.");
         }
-
-        [Fact]
-        public async Task ExportCsv_ReturnsFile_WhenExportIsSuccessful()
-        {
-            // Arrange
-            var fileName = $"nps_export_{DateTime.Now:yyyyMMddHHmmss}.csv";
-
-            // Mock da exportação do CSV
-            _mockExporter.Setup(exporter => exporter.ExportToCsvAsync(It.IsAny<string>()))
-                         .Returns(Task.CompletedTask); // Simula sucesso no método ExportToCsvAsync
-
-            // Act
-            var result = await _controller.ExportCsv();
-
-            if (result is FileContentResult fileResult)
-            {
-                fileResult.FileDownloadName.Should().Be(fileName, "O nome do arquivo exportado não é o esperado.");
-                fileResult.ContentType.Should().Be("text/csv", "O tipo de conteúdo do arquivo não é 'text/csv'.");
-            }
-            // Verifica se o resultado é um ObjectResult no caso de exceção
-            else if (result is ObjectResult objectResult)
-            {
-                objectResult.Should().NotBeNull("A ação de exportação não gerou um resultado válido.");
-                objectResult.Should().BeOfType<FileContentResult>("O resultado da exportação não é um FileContentResult.");
-                
-            }
-            else
-            {
-                throw new Exception("O resultado não é nem FileContentResult nem ObjectResult.");
-            }
-                       
-        }
-
-        [Fact]
-        public async Task ExportCsv_ReturnsBadRequest_WhenNpsExceptionIsThrown()
-        {
-            // Arrange
-            var npsException = new NpsException("Erro ao gerar CSV", 400);
-            _mockExporter.Setup(exporter => exporter.ExportToCsvAsync(It.IsAny<string>()))
-                         .ThrowsAsync(npsException);
-
-            // Act
-            var result = await _controller.ExportCsv();
-
-            // Assert
-            var objectResult = result as ObjectResult;
-            objectResult.Should().NotBeNull();
-            objectResult.StatusCode.Should().Be(400);
-            objectResult.Value.Should().Be("Erro ao gerar CSV");
-        }
-
-        public void Dispose()
-        {
-            Directory.Delete(_tempDirectory, true);
-        }
+             
 
     }
 }

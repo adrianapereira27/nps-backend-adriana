@@ -27,16 +27,14 @@ public class Program
 
         builder.Services.AddScoped<INpsLogRepository, NpsLogRepository>();   // padrão repository
 
-        builder.Services.AddScoped<INpsLogService, NpsLogService>();
-       // builder.Services.AddScoped<INpsLogExporter, NpsLogExporter>();
+        builder.Services.AddScoped<INpsLogService, NpsLogService>();       
         builder.Services.AddScoped<IPathProvider, PathProvider>();
-
+        
         // Registrar o NpsLogExporter
         builder.Services.AddScoped<INpsLogExporter, NpsLogExporter>(provider =>
         {
             var configuration = provider.GetRequiredService<IConfiguration>();
-            var logger = provider.GetRequiredService<ILogger<NpsLogExporter>>();
-            //var connectionString = builder.Configuration.GetConnectionString("MinhaConexao");
+            var logger = provider.GetRequiredService<ILogger<NpsLogExporter>>();            
             return new NpsLogExporter(connectionString, logger);
         });
 
