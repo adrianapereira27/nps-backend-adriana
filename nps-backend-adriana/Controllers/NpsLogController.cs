@@ -52,7 +52,7 @@ namespace nps_backend_adriana.Controllers
             }
             catch (NpsException ex) when (ex.ErrorCode == 404)
             {
-                return NotFound(ex.Message);
+                return NotFound(new { message = ex.Message });
             }
             catch (NpsException ex)
             {
