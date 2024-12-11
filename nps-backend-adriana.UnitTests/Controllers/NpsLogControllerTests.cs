@@ -66,8 +66,10 @@ namespace nps_backend_adriana.UnitTests.Controllers
 
             // Assert
             var objectResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal("Survey not found", objectResult.Value);
-        }
+            var value = Assert.IsAssignableFrom<object>(objectResult.Value);
+            var message = value.GetType().GetProperty("message").GetValue(value);
+            Assert.Equal("Survey not found", message);
+        }        
 
         // Testa o método CheckSurvey da controller com falha retornando 500
         [Fact]
